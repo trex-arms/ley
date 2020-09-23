@@ -150,45 +150,13 @@ const successes = await ley.up({ ... });
 
 ## API
 
+> **Important:** See [Options](#options) for common options shared all commands. <br>In this `API` section, you will only find **command-specific** options listed.
+
+
 ### ley.up(opts?)
 Returns: `Promise<string[]>`
 
 Returns a list of the _relative filenames_ (eg, `000-users.js`) that were successfully applied.
-
-#### opts.cwd
-Type: `string`<br>
-Default: `.`
-
-A target location to treat as the current working directory.
-
-> **Note:** This value is `path.resolve()`d from the current `process.cwd()` location.
-
-#### opts.dir
-Type: `string`<br>
-Default: `migrations`
-
-The directory (relative to `opts.cwd`) to find migration files.
-
-#### opts.client
-Type: `string`<br>
-Default: `undefined`
-
-The **name** of your desired client driver; for example, `pg`.<br>
-When unspecified, `ley` searches for all supported client drivers in this order:
-
-```js
-['postgres', 'pg']; // TODO: more
-```
-
-#### opts.config
-Type: `object`<br>
-Default: `undefined`
-
-A configuration object for your client driver to establish a connection.<br>
-When unspecified, `ley` assumes that your client driver is able to connect through `process.env` variables.
-
->**Note:** The `ley` CLI will search for a `ley.config.js` config file (configurable).<br>
-If found, this file may contain an object or a function that resolves to your config object.
 
 #### opts.single
 Type: `boolean`<br>
@@ -204,37 +172,18 @@ Returns: `Promise<string[]>`
 
 Returns a list of the _relative filenames_ (eg, `000-users.js`) that were successfully applied.
 
-#### opts.cwd
-Type: `string`<br>
-Default: `.`
-
-A target location to treat as the current working directory.
-
-> **Note:** This value is `path.resolve()`d from the current `process.cwd()` location.
-
-#### opts.dir
-Type: `string`<br>
-Default: `migrations`
-
-The directory (relative to `opts.cwd`) to find migration files.
-
-#### opts.client
-Type: `string`<br>
-Default: `undefined`
-
-The **name** of your desired client driver; for example, `pg`.<br>
-When unspecified, `ley` searches for all supported client drivers in this order:
-
-```js
-['postgres', 'pg']; // TODO: more
-```
-
 #### opts.all
 Type: `boolean`<br>
 Default: `false`
 
 Enable to apply **all** migration files' `down` task.<br>
 By default, only the most recently-applied migration file is invoked.
+
+
+### ley.status(opts?)
+Returns: `Promise<string[]>`
+
+Returns a list of the _relative filenames_ (eg, `000-users.js`) that have not yet been applied.
 
 
 ### ley.new(opts?)
@@ -263,6 +212,11 @@ Default: `5`
 When **not** using a timestamped prefix, this value controls the prefix total length.<br>
 For example, `00000-users.js` will be followed by `00001-teams.js`.
 
+
+## Options
+
+> **Note:** These are available to _all_ `ley` commands. <br>_See [API](#api) for programmatic command documentation._
+
 #### opts.cwd
 Type: `string`<br>
 Default: `.`
@@ -277,6 +231,50 @@ Default: `migrations`
 
 The directory (relative to `opts.cwd`) to find migration files.
 
+#### opts.client
+Type: `string`<br>
+Default: `undefined`
+
+The **name** of your desired client driver; for example, `pg`.<br>
+When unspecified, `ley` searches for all supported client drivers in this order:
+
+```js
+['postgres', 'pg', 'mysql', 'mysql2', 'better-sqlite3']
+```
+
+#### opts.config
+Type: `object`<br>
+Default: `undefined`
+
+A configuration object for your client driver to establish a connection.<br>
+When unspecified, `ley` assumes that your client driver is able to connect through `process.env` variables.
+
+>**Note:** The `ley` CLI will search for a `ley.config.js` config file (configurable).<br>
+If found, this file may contain an object or a function that resolves to your config object.
+
+#### opts.require
+Type: `string` or `string[]`<br>
+Default: `undefined`
+
+A module name (or list of names) to be `require`d by `ley` at startup.
+
+For example, you may want to use [`dotenv`](http://npmjs.com/package/dotenv) to load existing `.env` file(s) in your project:
+
+```js
+const ley = require('ley');
+
+const files = await ley.status({
+  require: ['dotenv/config']
+});
+```
+
+Through [CLI](#cli) usage, this is equivalent to:
+
+```sh
+$ ley -r dotenv/config status
+# or
+$ ley --require dotenv/config status
+```
 
 ## License
 
