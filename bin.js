@@ -10,7 +10,7 @@ function wrap(act) {
 	return async (opts, tmp) => {
 		if (tmp = local(opts.config, opts.cwd)) {
 			$.info('Loading configuration');
-			opts.config = typeof tmp === 'function' ? tmp() : tmp;
+			opts.config = await (typeof tmp === 'function' ? tmp() : tmp);
 		}
 		await ley[act](opts).then(done).catch($.bail);
 	};
@@ -20,7 +20,7 @@ sade('ley')
 	.version(pkg.version)
 	.option('-C, --cwd', 'The current directory to resolve from', '.')
 	.option('-d, --dir', 'The directory of migration files to run', 'migrations')
-	.option('-c, --config', 'Path to \`ley\` config file', 'ley.config.js')
+	.option('-c, --config', 'Path to `ley` config file', 'ley.config.js')
 	.option('-r, --require', 'Additional module(s) to preload')
 
 	.command('up')
